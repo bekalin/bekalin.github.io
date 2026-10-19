@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>BEKALIN</title>
+  <meta name="description" content="Better Education Keeps All Learners Inspired &amp; Nurtured">
+  <meta name="robots" content="noindex">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="BEKALIN">
+  <meta property="og:title" content="BEKALIN">
+  <meta property="og:description" content="Better Education Keeps All Learners Inspired &amp; Nurtured">
+  <meta property="og:url" content="https://bekalin.github.io/">
+  <meta property="og:image" content="https://bekalin.github.io/assets/icon-512.png">
+  <meta property="og:image:width" content="512">
+  <meta property="og:image:height" content="512">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="assets/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="apple-mobile-web-app-title" content="BEKALIN">
+  <meta name="theme-color" content="#0d226b">
+  <link rel="preconnect" href="https://script.google.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Offside&display=swap" rel="stylesheet">
+  <style>
+    html { -webkit-text-size-adjust: 100%; }
+    :root { --bar: 38px; --bg: #f2f2f7; --bar-bg: #0d226b; }
+    @media (prefers-color-scheme: dark) { :root { --bg: #070d18; --bar-bg: #0a1640; } }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; background: var(--bg); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, sans-serif; }
+    body { display: flex; flex-direction: column; overflow: hidden; }
+    /* Bar atas: hanya nama BEKALIN di tengah (huruf Offside seperti logo di dashboard). */
+    .bar { flex: none; height: calc(var(--bar) + env(safe-area-inset-top, 0px)); padding-top: env(safe-area-inset-top, 0px); display: flex; align-items: center; justify-content: center; background: var(--bar-bg); }
+    .bar b { font-family: 'Offside', 'Plus Jakarta Sans', system-ui, sans-serif; font-weight: 400; font-size: 16px; line-height: 1; letter-spacing: 0.06em; color: #fff; user-select: none; }
+    .bar b i { font-style: normal; color: #36d1da; }
+    /* Bingkai memotong bagian atas halaman Apps Script (spanduk "Aplikasi ini dibuat oleh pengguna Google Apps Script"). */
+    .frame { position: relative; flex: 1 1 auto; overflow: hidden; margin-bottom: env(safe-area-inset-bottom, 0px); }
+    .frame iframe { position: absolute; left: 0; width: 100%; border: 0; top: calc(var(--clip, 0px) * -1); height: calc(100% + var(--clip, 0px)); background: transparent; }
+    .load { position: absolute; inset: 0; display: grid; place-items: center; color: #8a8a8e; font-size: 0.9rem; pointer-events: none; transition: opacity 0.3s; }
+    .load.done { opacity: 0; }
+  </style>
+</head>
+<body>
+  <header class="bar">
+    <b aria-label="BEKALIN">BEKA<i>LIN</i></b>
+  </header>
+  <main class="frame">
+    <div class="load" id="load">Memuat BEKALIN…</div>
+    <iframe id="app" title="BEKALIN" allow="clipboard-write; fullscreen" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  </main>
+  <script src="config.js"></script>
+  <script>
+    (function () {
+      // Alamat web app BEKALIN. Bisa diganti lewat BEKALIN_URL di config.js.
+      var DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbyaFOrZL4dUZlS76yJpATtlHvyjpS6S7NM6pol5ER0c4cVRYnbnX_715ak6tMLFKBXFjg/exec';
+      var cfg = window.APP_CONFIG || {};
+      var base = String(cfg.BEKALIN_URL || DEFAULT_URL);
+      if (!/^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(base)) base = DEFAULT_URL;
+
+      var qs = new URLSearchParams(location.search);
+      var menu = (qs.get('menu') || '').trim();
+      var src = base + (/^[A-Za-z0-9_]{1,40}$/.test(menu) ? '?menu=' + menu : '');
+
+      // Tinggi spanduk Google yang dipotong. Atur lewat ?clip=40 (uji coba) atau BEKALIN_CLIP di config.js.
+      var clip = Number(qs.get('clip'));
+      if (!isFinite(clip) || qs.get('clip') === null) clip = Number(cfg.BEKALIN_CLIP);
+      if (!isFinite(clip) || clip < 0 || clip > 120) clip = 0;
+      document.documentElement.style.setProperty('--clip', clip + 'px');
+
+      var f = document.getElementById('app');
+      f.addEventListener('load', function () { document.getElementById('load').classList.add('done'); });
+      f.src = src;
+    })();
+  </script>
+</body>
+</html>
